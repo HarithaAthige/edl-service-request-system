@@ -1,0 +1,12 @@
+# Build output
+target/
+node_modules/
+dist/
+
+# IDE files
+.idea/
+*.iml
+
+# Logs and secrets
+*.log
+.env
