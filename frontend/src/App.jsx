@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import './form.css'
 import Track from './Track.jsx'
+import Dashboard from './Dashboard.jsx'
 
 const EMPTY = {
   type: 'NEW_CONNECTION',
@@ -105,9 +106,11 @@ function App() {
         )}
       </div>
       <Track />
+      <Dashboard />
     </main>
   )
 }
 
 export default App
+
 
