@@ -8,9 +8,9 @@ A citizen submits a request through a web form. The request is verified, approve
 
 ## Screenshots
 
-![Full page: submit form, request tracking with a rejected request, and the officer dashboard](docs/screenshots/full-page.png)
+![Overview tab: request totals, status charts and the latest requests](docs/screenshots/full-page.png)
 
-*The submit form (left), the tracking timeline for a rejected request and the officer dashboard with colour-coded statuses (right).*
+*The Overview tab of the ServFlow app. The side navigation has four tabs: Overview, New request, Track a request and All requests. The Overview shows totals, a chart of requests by status, requests received per day and the latest requests.*
 
 ![Timeline of an approved request](docs/screenshots/track-approved.png)
 
@@ -57,13 +57,14 @@ Message keys are the request ID, so all events for one request go to the same pa
 
 ## Frontend
 
-A single page with three cards:
+A single-page app called ServFlow, with a side navigation and four tabs:
 
-- **Apply for a service**: a form with loading, error and success states. It shows clear messages for an expired token (401) and for rate limiting (429). There are no NIC or phone checks in the browser on purpose: the check belongs to verification-service, so a bad NIC visibly ends up as `REJECTED`.
+- **Overview**: totals for all, in-progress, approved and rejected requests, a donut chart of requests by status, a bar chart of requests received in the last 7 days, and the latest requests. The charts are plain SVG, so no chart library is needed.
+- **New request**: a form with loading, error and success states. It shows clear messages for an expired token (401) and for rate limiting (429). There are no NIC or phone checks in the browser on purpose: the check belongs to verification-service, so a bad NIC visibly ends up as `REJECTED`.
 - **Track a request**: enter a request number to see its current status and a timeline built from `/requests/{id}/history`. A missing request shows "No request found".
-- **Officer dashboard**: a table of all requests, newest first, with a status filter, a refresh button and colour-coded status badges. It is view-only.
+- **All requests**: a table of all requests, newest first, with a status filter and a refresh button. Selecting a row opens its history in the Track tab. It is view-only.
 
-The layout has two columns on wide screens and one column on narrow screens.
+On narrow screens the side navigation becomes a top bar. The colours follow the browser light or dark setting, and the ServFlow logo is also used as the browser icon.
 
 The browser never holds the WSO2 token. The Vite dev server proxies every call that starts with `/api` to the WSO2 gateway, rewrites `/api/...` to `/requestapi/1.0.0/...`, and adds the `Authorization: Bearer` header on the server side. This also avoids CORS problems, because the browser only talks to one address.
 
