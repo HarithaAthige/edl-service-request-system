@@ -77,3 +77,17 @@
   .sr-st-APPROVED { color: #66d98a; border-color: #66d98a; background: rgba(102,217,138,0.15); }
   .sr-st-REJECTED { color: #ff8a80; border-color: #ff8a80; background: rgba(255,138,128,0.15); }
 }
+
+/* Timeline dot colours match the status badges */
+.sr-timeline li.sr-tl-SUBMITTED::before { background: #1f6fc5; }
+.sr-timeline li.sr-tl-UNDER_VERIFICATION::before { background: #a86400; }
+.sr-timeline li.sr-tl-VERIFIED::before { background: #0a7f8a; }
+.sr-timeline li.sr-tl-APPROVED::before { background: #1e7a3a; }
+.sr-timeline li.sr-tl-REJECTED::before { background: #b3261e; }
+@media (prefers-color-scheme: dark) {
+  .sr-timeline li.sr-tl-SUBMITTED::before { background: #6fb1ff; }
+  .sr-timeline li.sr-tl-UNDER_VERIFICATION::before { background: #ffb84d; }
+  .sr-timeline li.sr-tl-VERIFIED::before { background: #4dd0e1; }
+  .sr-timeline li.sr-tl-APPROVED::before { background: #66d98a; }
+  .sr-timeline li.sr-tl-REJECTED::before { background: #ff8a80; }
+}

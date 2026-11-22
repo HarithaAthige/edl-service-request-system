@@ -74,7 +74,7 @@ function Track() {
           </p>
           <ol className="sr-timeline">
             {history.map((h) => (
-              <li key={h.id}>
+              <li key={h.id} className={'sr-tl-' + h.status}>
                 <strong>{h.status}</strong>
                 {h.reason ? ' - ' + h.reason : ''}
                 <div className="sr-time">{new Date(h.changedAt).toLocaleString()}</div>
