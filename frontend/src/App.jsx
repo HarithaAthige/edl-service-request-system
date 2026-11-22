@@ -1,116 +1,105 @@
-import { useState } from 'react'
-import './form.css'
-import Track from './Track.jsx'
-import Dashboard from './Dashboard.jsx'
+import { useCallback, useEffect, useState } from 'react'
+import './styles.css'
+import { api } from './lib'
+import Overview from './pages/Overview'
+import NewRequest from './pages/NewRequest'
+import TrackPage from './pages/TrackPage'
+import Requests from './pages/Requests'
 
-const EMPTY = {
-  type: 'NEW_CONNECTION',
-  citizenName: '',
-  nic: '',
-  phone: '',
-  address: '',
-  description: '',
+const ICONS = {
+  overview: 'M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z',
+  new: 'M12 5v14M5 12h14',
+  track: 'M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.3-4.3',
+  list: 'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01',
 }
 
+const TABS = [
+  ['overview', 'Overview', 'How requests are moving through the system'],
+  ['new', 'New request', 'Apply for a service'],
+  ['track', 'Track a request', 'Look up a request and see its history'],
+  ['list', 'All requests', 'Every request, newest first'],
+]
+
 function App() {
-  const [form, setForm] = useState(EMPTY)
-  const [loading, setLoading] = useState(false)
+  const [tab, setTab] = useState('overview')
+  const [trackId, setTrackId] = useState('')
+  const [requests, setRequests] = useState([])
   const [error, setError] = useState('')
-  const [created, setCreated] = useState(null)
+  const [loading, setLoading] = useState(true)
 
-  function update(e) {
-    setForm({ ...form, [e.target.name]: e.target.value })
-  }
+  const fetchAll = useCallback(
+    () =>
+      api('/api/requests')
+        .then((d) => {
+          setRequests(Array.isArray(d) ? [...d].sort((a, b) => b.id - a.id) : [])
+          setError('')
+        })
+        .catch((e) => setError(e.message))
+        .finally(() => setLoading(false)),
+    [],
+  )
 
-  async function submit(e) {
-    e.preventDefault()
+  useEffect(() => {
+    fetchAll()
+  }, [fetchAll])
+
+  const refresh = () => {
     setLoading(true)
-    setError('')
-    setCreated(null)
-    try {
-      const res = await fetch('/api/requests', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      })
-      if (res.status === 401) {
-        throw new Error('Not authorised (401). The WSO2 token may have expired.')
-      }
-      if (res.status === 429) {
-        throw new Error('Too many requests (429). Please wait a minute and try again.')
-      }
-      if (!res.ok) {
-        throw new Error('The server returned an error (' + res.status + ').')
-      }
-      const data = await res.json()
-      setCreated(data)
-      setForm(EMPTY)
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
+    fetchAll()
   }
+  const open = (id) => {
+    setTrackId(String(id))
+    setTab('track')
+  }
+
+  const [, title, sub] = TABS.find((t) => t[0] === tab)
+  const state = loading ? 'Checking' : error ? 'Problem' : 'Online'
+  const stateText = { Checking: 'Checking gateway', Problem: 'Needs attention', Online: 'Gateway online' }[state]
+  const shared = { requests, error, loading, onRefresh: refresh, onOpen: open }
 
   return (
-    <main className="sr-page">
-      <div className="sr-card">
-        <h1>Apply for a service</h1>
-        <p className="sr-sub">Submit a new service request.</p>
-
-        <form onSubmit={submit}>
-          <div className="sr-field">
-            <label htmlFor="type">Request type</label>
-            <select id="type" name="type" value={form.type} onChange={update}>
-              <option value="NEW_CONNECTION">New electricity connection</option>
-            </select>
+    <div className="app">
+      <aside className="side">
+        <div className="brand">
+          <img src="/logo.png" alt="" />
+          <div>
+            <b>ServFlow</b>
+            <span>Service Request System</span>
           </div>
+        </div>
+        <nav className="navs" aria-label="Main">
+          {TABS.map(([id, name]) => (
+            <button
+              key={id}
+              className={'nav' + (tab === id ? ' on' : '')}
+              onClick={() => setTab(id)}
+              aria-current={tab === id ? 'page' : undefined}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d={ICONS[id]} />
+              </svg>
+              {name}
+            </button>
+          ))}
+        </nav>
+        <div className="side-foot">Kafka + WSO2 API Manager</div>
+      </aside>
 
-          <div className="sr-field">
-            <label htmlFor="citizenName">Full name</label>
-            <input id="citizenName" name="citizenName" value={form.citizenName} onChange={update} required />
+      <main className="main">
+        <header className="top">
+          <div>
+            <h1>{title}</h1>
+            <p>{sub}</p>
           </div>
-
-          <div className="sr-field">
-            <label htmlFor="nic">NIC number</label>
-            <input id="nic" name="nic" value={form.nic} onChange={update} required />
-          </div>
-
-          <div className="sr-field">
-            <label htmlFor="phone">Phone number</label>
-            <input id="phone" name="phone" value={form.phone} onChange={update} required />
-          </div>
-
-          <div className="sr-field">
-            <label htmlFor="address">Address</label>
-            <input id="address" name="address" value={form.address} onChange={update} required />
-          </div>
-
-          <div className="sr-field">
-            <label htmlFor="description">Description</label>
-            <textarea id="description" name="description" rows="3" value={form.description} onChange={update} />
-          </div>
-
-          <button className="sr-btn" type="submit" disabled={loading}>
-            {loading ? 'Submitting...' : 'Submit request'}
-          </button>
-        </form>
-
-        {error && <div className="sr-msg sr-error">{error}</div>}
-
-        {created && (
-          <div className="sr-msg sr-ok">
-            Request submitted. Your request number is <strong>{created.id}</strong>.
-            Current status: <strong>{created.status}</strong>.
-          </div>
-        )}
-      </div>
-      <Track />
-      <Dashboard />
-    </main>
+          <span className={'chip ' + state}>{stateText}</span>
+        </header>
+        {tab === 'overview' && <Overview {...shared} />}
+        {tab === 'new' && <NewRequest onCreated={refresh} onOpen={open} />}
+        {tab === 'track' && <TrackPage key={trackId} initialId={trackId} />}
+        {tab === 'list' && <Requests {...shared} />}
+      </main>
+    </div>
   )
 }
 
 export default App
-
-
