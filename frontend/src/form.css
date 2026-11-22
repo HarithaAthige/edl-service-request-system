@@ -37,3 +37,15 @@
 .sr-error { background: var(--sr-err-bg); color: var(--sr-err-text); }
 .sr-ok { background: var(--sr-ok-bg); color: var(--sr-ok-text); }
 @media (max-width: 480px) { .sr-card { padding: 16px; } }
+.sr-track { margin-top: 20px; }
+.sr-track h2 { font-size: 1.3rem; margin: 0 0 12px; }
+.sr-row { display: flex; gap: 8px; }
+.sr-row input { flex: 1; min-width: 0; padding: 10px; border: 1px solid var(--sr-line); border-radius: 8px; font: inherit; background: var(--sr-input); color: var(--sr-text); }
+.sr-btn-inline { width: auto; padding: 10px 18px; }
+.sr-summary { margin-top: 16px; }
+.sr-summary p { margin: 4px 0; }
+.sr-badge { display: inline-block; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--sr-accent); font-weight: 600; font-size: 0.85rem; }
+.sr-timeline { list-style: none; margin: 14px 0 0; padding: 0 0 0 16px; border-left: 2px solid var(--sr-line); }
+.sr-timeline li { position: relative; margin-bottom: 14px; padding-left: 12px; }
+.sr-timeline li::before { content: ''; position: absolute; left: -23px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--sr-accent); }
+.sr-time { color: var(--sr-muted); font-size: 0.85rem; }

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import './form.css'
+import Track from './Track.jsx'
 
 const EMPTY = {
   type: 'NEW_CONNECTION',
@@ -103,8 +104,10 @@ function App() {
           </div>
         )}
       </div>
+      <Track />
     </main>
   )
 }
 
 export default App
+
