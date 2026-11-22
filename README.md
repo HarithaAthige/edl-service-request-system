@@ -112,7 +112,7 @@ Repeat for `verification-service`, `approval-service` and `notification-service`
 2. **Deploy** it to the Default gateway, then **Publish** it.
 3. In the **Developer Portal**, create an application, subscribe it to RequestAPI, open **Production Keys**, generate keys and generate an access token.
 
-The WSO2 configuration is stored inside the container, so it has to be recreated if the container is removed.
+The WSO2 configuration is stored inside the container, so it has to be recreated if the container is removed. A normal restart keeps it. For a safety copy, run `docker commit wso2 wso2-backup` after changing anything in WSO2 (restoring from this snapshot has not been tested).
 
 ### 4. Start the frontend
 
