@@ -1,121 +1,109 @@
 import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import './form.css'
+
+const EMPTY = {
+  type: 'NEW_CONNECTION',
+  citizenName: '',
+  nic: '',
+  phone: '',
+  address: '',
+  description: '',
+}
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [form, setForm] = useState(EMPTY)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [created, setCreated] = useState(null)
+
+  function update(e) {
+    setForm({ ...form, [e.target.name]: e.target.value })
+  }
+
+  async function submit(e) {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+    setCreated(null)
+    try {
+      const res = await fetch('/api/requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      if (res.status === 401) {
+        throw new Error('Not authorised (401). The WSO2 token may have expired.')
+      }
+      if (res.status === 429) {
+        throw new Error('Too many requests (429). Please wait a minute and try again.')
+      }
+      if (!res.ok) {
+        throw new Error('The server returned an error (' + res.status + ').')
+      }
+      const data = await res.json()
+      setCreated(data)
+      setForm(EMPTY)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <main className="sr-page">
+      <div className="sr-card">
+        <h1>Apply for a service</h1>
+        <p className="sr-sub">Submit a new service request.</p>
 
-      <div className="ticks"></div>
+        <form onSubmit={submit}>
+          <div className="sr-field">
+            <label htmlFor="type">Request type</label>
+            <select id="type" name="type" value={form.type} onChange={update}>
+              <option value="NEW_CONNECTION">New electricity connection</option>
+            </select>
+          </div>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+          <div className="sr-field">
+            <label htmlFor="citizenName">Full name</label>
+            <input id="citizenName" name="citizenName" value={form.citizenName} onChange={update} required />
+          </div>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+          <div className="sr-field">
+            <label htmlFor="nic">NIC number</label>
+            <input id="nic" name="nic" value={form.nic} onChange={update} required />
+          </div>
+
+          <div className="sr-field">
+            <label htmlFor="phone">Phone number</label>
+            <input id="phone" name="phone" value={form.phone} onChange={update} required />
+          </div>
+
+          <div className="sr-field">
+            <label htmlFor="address">Address</label>
+            <input id="address" name="address" value={form.address} onChange={update} required />
+          </div>
+
+          <div className="sr-field">
+            <label htmlFor="description">Description</label>
+            <textarea id="description" name="description" rows="3" value={form.description} onChange={update} />
+          </div>
+
+          <button className="sr-btn" type="submit" disabled={loading}>
+            {loading ? 'Submitting...' : 'Submit request'}
+          </button>
+        </form>
+
+        {error && <div className="sr-msg sr-error">{error}</div>}
+
+        {created && (
+          <div className="sr-msg sr-ok">
+            Request submitted. Your request number is <strong>{created.id}</strong>.
+            Current status: <strong>{created.status}</strong>.
+          </div>
+        )}
+      </div>
+    </main>
   )
 }
 
