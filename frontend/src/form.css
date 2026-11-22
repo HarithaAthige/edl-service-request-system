@@ -64,3 +64,16 @@
   .sr-page > .sr-card:nth-child(3) { grid-column: 2; grid-row: 2; }
   .sr-page > .sr-track { margin-top: 0; }
 }
+/* STATUS COLORS */
+.sr-st-SUBMITTED { color: #1f6fc5; border-color: #1f6fc5; background: rgba(31,111,197,0.12); }
+.sr-st-UNDER_VERIFICATION { color: #a86400; border-color: #a86400; background: rgba(217,138,0,0.14); }
+.sr-st-VERIFIED { color: #0a7f8a; border-color: #0a7f8a; background: rgba(10,127,138,0.12); }
+.sr-st-APPROVED { color: #1e7a3a; border-color: #1e7a3a; background: rgba(46,158,79,0.14); }
+.sr-st-REJECTED { color: #b3261e; border-color: #b3261e; background: rgba(214,69,69,0.12); }
+@media (prefers-color-scheme: dark) {
+  .sr-st-SUBMITTED { color: #6fb1ff; border-color: #6fb1ff; background: rgba(111,177,255,0.15); }
+  .sr-st-UNDER_VERIFICATION { color: #ffb84d; border-color: #ffb84d; background: rgba(255,184,77,0.15); }
+  .sr-st-VERIFIED { color: #4dd0e1; border-color: #4dd0e1; background: rgba(77,208,225,0.15); }
+  .sr-st-APPROVED { color: #66d98a; border-color: #66d98a; background: rgba(102,217,138,0.15); }
+  .sr-st-REJECTED { color: #ff8a80; border-color: #ff8a80; background: rgba(255,138,128,0.15); }
+}

@@ -70,7 +70,7 @@ function Track() {
             Request <strong>{request.id}</strong> for {request.citizenName}
           </p>
           <p>
-            Current status: <span className="sr-badge">{request.status}</span>
+            Current status: <span className={'sr-badge sr-st-' + request.status}>{request.status}</span>
           </p>
           <ol className="sr-timeline">
             {history.map((h) => (
@@ -88,3 +88,4 @@ function Track() {
 }
 
 export default Track
+

@@ -79,7 +79,7 @@ function Dashboard() {
                   <td>{r.citizenName}</td>
                   <td>{r.type}</td>
                   <td>
-                    <span className="sr-badge">{r.status}</span>
+                    <span className={'sr-badge sr-st-' + r.status}>{r.status}</span>
                   </td>
                   <td>{new Date(r.createdAt).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}</td>
                 </tr>
@@ -93,4 +93,5 @@ function Dashboard() {
 }
 
 export default Dashboard
+
 
