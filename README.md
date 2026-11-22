@@ -161,16 +161,16 @@ A request with an invalid NIC (for example `"nic":"12345"`) ends as `REJECTED` w
 ## Why Kafka?
 
 - **Loose coupling.** The services never call each other. Each one reads a topic and writes a topic, so one can be stopped, changed or replaced without touching the others.
-- **Messages wait.** When a service is down, its events stay in Kafka and are processed when it starts again. During testing the verification and approval services were started one at a time, and every waiting request moved forward in order.
+- **Messages wait.** When a service is down, its events stay in Kafka and are processed when it starts again. During testing I started the verification and approval services one at a time, and every waiting request was processed.
 - **Ordering per request.** The request ID is the message key, so all events for one request stay in order.
-- **Failure handling.** A bad message is retried three times and then sent to a dead-letter topic instead of blocking everything behind it.
+- **Failure handling.** In the verification service, a message that fails is retried three times and then sent to a dead-letter topic, so it does not block the messages behind it.
 
 ## Why WSO2 API Manager?
 
-- **One place for security.** OAuth2 tokens are checked at the gateway, so none of the four services needs its own login code.
+- **One place for security.** OAuth2 tokens are checked at the gateway, so the services do not need their own login code.
 - **Rate limiting.** Throttling per application is a setting, not code. A client that sends too many calls gets `429`.
 - **Versioning and publishing.** APIs are published, subscribed to and versioned (`1.0.0` and `2.0.0` exist) without changing the backend.
-- **A single entry point.** The frontend talks to one address, and the backend services can move or change behind it.
+- **A single entry point.** The frontend calls one address (through a dev proxy to the WSO2 gateway), and the backend services can change behind it.
 
 ## What has been tested
 
